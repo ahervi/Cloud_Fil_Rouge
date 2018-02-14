@@ -1,0 +1,139 @@
+---
+# based on the example at http://coderobot.downley.net/swagger-driven-testing-in-python.html
+
+swagger: '2.0'
+info:
+  title: Photo service API
+  version: "0.1"
+consumes:
+  - application/json
+produces:
+  - application/json
+
+# I'd rather not deal with security right now.
+#
+# security:
+#   # enable OAuth protection for all REST endpoints
+#   # (only active if the TOKENINFO_URL environment variable is set)
+#   - oauth2: [uid]
+
+paths:
+  /photos:
+    post:
+      operationId: photo_service.post_photos
+      summary: Create a new photo
+      parameters:
+        - name: photo
+          in: body
+          schema:
+            $ref: '#/definitions/Photo'
+      responses:
+        201:
+          description: New photo created
+        409:
+          description: Photo already exists with this display_name
+    get:
+      operationId: photo_service.get_photos
+      summary: Get all photos
+      parameters:
+        - name: offset
+          in: query
+          type: integer
+          minimum: 0
+          default: 0
+          x-example: 0
+        - name: limit
+          in: query
+          type: integer
+          minimum: 0
+          default: 10
+          x-example: 10
+      responses:
+        200:
+          description: Returns a list of photos URIs
+          schema:
+            type: array
+            items:
+              type: string
+  /photo/{photo_id}:
+    get:
+      # tags: [Photo]
+      operationId: photo_service.get_photo
+      summary: Get a single photo.
+      parameters:
+        - $ref: '#/parameters/photo_id'
+      responses:
+        200:
+          description: Return the requested photo.
+          schema:
+            $ref: '#/definitions/Photo'
+        404:
+          description: Photo does not exist.
+    delete:
+      operationId: photo_service.delete_photo
+      summary: Remove a photo.
+      parameters:
+        - $ref: '#/parameters/photo_id'
+      responses:
+        204:
+          description: Photo was deleted.
+        404:
+          description: Photo does not exist.
+    put:
+      operationId: photo_service.put_photo
+      summary: put a single photo.
+      parameters:
+        - $ref: '#/parameters/photo_id'
+        - name: photo
+          in: body
+          schema:
+            $ref: '#/definitions/Photo'
+      responses:
+        200:
+          description: put successful.
+        404:
+          description: Photo does not exist.
+
+parameters:
+  photo_id:
+    name: photo_id
+    description: Unique identifier of the photo.
+    in: path
+    type: string
+    required: true
+    pattern: "^[a-zA-Z0-9-]+$"
+    x-example: 'ksix13'
+
+       
+definitions:
+  Photo:
+    type: object
+    properties:
+      author:
+        type: string
+        description: |
+          The "nickname" of the author.
+        example: "Susie"
+        minLength: 1
+        maxLength: 100
+      filename:
+        type: string
+        description: |
+          The "nickname" of the author.
+        example: "Susie"
+        minLength: 1
+        maxLength: 100
+      b64:
+        type: string
+        description: |
+          The "nickname" of the author.
+        example: "UGUIGI"
+        minLength: 1
+        maxLength: 100
+      tags:
+        type: array
+        description: The tags of photos.
+        items:
+          type: string
+        example: ["jpeg"]
+        minLength: 1
