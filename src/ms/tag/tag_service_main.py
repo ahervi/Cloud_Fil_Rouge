@@ -1,35 +1,59 @@
 #!/usr/bin/env python
+import logging
+import json
 
+from mongoengine import *
+from bson.objectid import ObjectId
+from bson import json_util
+from bson.errors import InvalidId
+import pymongo
+import json
 from thrift.transport import TSocket
 from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
 from thrift.server import TServer
-import logging
-import connexion
-from connexion import NoContent
-from mongoengine import connect
 from pygen.tagThrift import TagThrift
-
+from tag_mongo_wrapper import *
+from tag import Tag
 class TagThriftHandler:
     def __init__(self):
         self.log = {}
+    
+    def getTag(tag_id):
+        logging.debug('Getting tag with id: ' + tag_id)
+        try:
+            tag = mongo_get_tag(tag_id)
+            tag._data.pop('id') # This is not very clean ...
+        except (Tag.DoesNotExist, InvalidId) as e:
+            return ['Not Found', '404']
+        except pymongo.errors.ServerSelectionTimeoutError as sste:
+            return ['Mongo unavailable', '503']
+        return ['Get Ok', '201', tag['name']]
 
-    def addTag(self, tag):
-	#mogo db add tag to tag db
-	print(tag)
-        return
-
-    def deleteTag(self, tag):
-	#mogo db delete tag in tag db
-	print(tag)
-	return tag
+    def addTag(self, name):
+        try:                                                                        
+            if mongo_check(name) > 0:                       
+                return ['Conflict', '409']                                              
+            else:
+                tag = mongo_add(name)                          
+                return ['Created', '201', str(tag.id)]
+        except pymongo.errors.ServerSelectionTimeoutError as sste:                  
+            return ['Mongo unavailable', '503']  
 
     def getTags(self, beginTag):
-        #mongo db get tags that begin with beginTag
-        print(beginTag)
-        tags = ["example1", "example2"]
-        print(str(tags))
-        return tags
+        return mongo_get_begin_tags(beginTag)
+
+    def deleteTag(self, tag_id):
+        tag = Tag.objects(id=ObjectId(tag_id)).get().delete()
+        return ['NoContent', '204']
+
+    def deleteAllTags(self):
+        Tag.objects.all().delete()
+	return
+
+
+
+
 
 logging.basicConfig(level=logging.DEBUG)
 

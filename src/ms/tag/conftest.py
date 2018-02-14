@@ -23,7 +23,9 @@ def client():
 
 @pytest.fixture
 def clearTags():
+
     Tag.objects.all().delete()
+
 
     
 @pytest.fixture(scope="class")

@@ -17,18 +17,22 @@ import robustify
 
 @robustify.retry_mongo
 def mongo_check(name):
+
     count = Tag.objects(name=name).count()
+
     return count
 
 @robustify.retry_mongo
-def mongo_add(display_name, first_name, last_name, interests):
-    t = Tag(display_name = display_name,
-                      first_name = first_name,
-                      last_name = last_name,
-                      interests = interests).save()
+def mongo_add(name):
+    t = Tag(name = name).save()
     return t
 
 @robustify.retry_mongo
 def mongo_get_tag(tag_id):
     t = Tag.objects(id=ObjectId(tag_id)).get()
     return t
+
+@robustify.retry_mongo
+def mongo_get_begin_tags(beginTag):
+
+    return [tag['name'] for tag in Tag.objects if tag['name'].startswith(beginTag)]

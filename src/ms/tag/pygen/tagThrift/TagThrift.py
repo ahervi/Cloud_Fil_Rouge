@@ -18,17 +18,24 @@ except:
 
 
 class Iface:
-  def addTag(self, tag):
+  def getTag(self, tag_id):
     """
     Parameters:
-     - tag
+     - tag_id
     """
     pass
 
-  def deleteTag(self, tag):
+  def addTag(self, name):
     """
     Parameters:
-     - tag
+     - name
+    """
+    pass
+
+  def deleteTag(self, tag_id):
+    """
+    Parameters:
+     - tag_id
     """
     pass
 
@@ -39,6 +46,9 @@ class Iface:
     """
     pass
 
+  def deleteAllTags(self):
+    pass
+
 
 class Client(Iface):
   def __init__(self, iprot, oprot=None):
@@ -47,18 +57,48 @@ class Client(Iface):
       self._oprot = oprot
     self._seqid = 0
 
-  def addTag(self, tag):
+  def getTag(self, tag_id):
     """
     Parameters:
-     - tag
+     - tag_id
     """
-    self.send_addTag(tag)
+    self.send_getTag(tag_id)
+    return self.recv_getTag()
+
+  def send_getTag(self, tag_id):
+    self._oprot.writeMessageBegin('getTag', TMessageType.CALL, self._seqid)
+    args = getTag_args()
+    args.tag_id = tag_id
+    args.write(self._oprot)
+    self._oprot.writeMessageEnd()
+    self._oprot.trans.flush()
+
+  def recv_getTag(self):
+    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
+    if mtype == TMessageType.EXCEPTION:
+      x = TApplicationException()
+      x.read(self._iprot)
+      self._iprot.readMessageEnd()
+      raise x
+    result = getTag_result()
+    result.read(self._iprot)
+    self._iprot.readMessageEnd()
+    if result.success is not None:
+      return result.success
+    raise TApplicationException(TApplicationException.MISSING_RESULT, "getTag failed: unknown result");
+
+  def addTag(self, name):
+    """
+    Parameters:
+     - name
+    """
+    self.send_addTag(name)
     return self.recv_addTag()
 
-  def send_addTag(self, tag):
+  def send_addTag(self, name):
     self._oprot.writeMessageBegin('addTag', TMessageType.CALL, self._seqid)
     args = addTag_args()
-    args.tag = tag
+    args.name = name
     args.write(self._oprot)
     self._oprot.writeMessageEnd()
     self._oprot.trans.flush()
@@ -77,18 +117,18 @@ class Client(Iface):
       return result.success
     raise TApplicationException(TApplicationException.MISSING_RESULT, "addTag failed: unknown result");
 
-  def deleteTag(self, tag):
+  def deleteTag(self, tag_id):
     """
     Parameters:
-     - tag
+     - tag_id
     """
-    self.send_deleteTag(tag)
+    self.send_deleteTag(tag_id)
     return self.recv_deleteTag()
 
-  def send_deleteTag(self, tag):
+  def send_deleteTag(self, tag_id):
     self._oprot.writeMessageBegin('deleteTag', TMessageType.CALL, self._seqid)
     args = deleteTag_args()
-    args.tag = tag
+    args.tag_id = tag_id
     args.write(self._oprot)
     self._oprot.writeMessageEnd()
     self._oprot.trans.flush()
@@ -137,14 +177,39 @@ class Client(Iface):
       return result.success
     raise TApplicationException(TApplicationException.MISSING_RESULT, "getTags failed: unknown result");
 
+  def deleteAllTags(self):
+    self.send_deleteAllTags()
+    self.recv_deleteAllTags()
+
+  def send_deleteAllTags(self):
+    self._oprot.writeMessageBegin('deleteAllTags', TMessageType.CALL, self._seqid)
+    args = deleteAllTags_args()
+    args.write(self._oprot)
+    self._oprot.writeMessageEnd()
+    self._oprot.trans.flush()
+
+  def recv_deleteAllTags(self):
+    (fname, mtype, rseqid) = self._iprot.readMessageBegin()
+    if mtype == TMessageType.EXCEPTION:
+      x = TApplicationException()
+      x.read(self._iprot)
+      self._iprot.readMessageEnd()
+      raise x
+    result = deleteAllTags_result()
+    result.read(self._iprot)
+    self._iprot.readMessageEnd()
+    return
+
 
 class Processor(Iface, TProcessor):
   def __init__(self, handler):
     self._handler = handler
     self._processMap = {}
+    self._processMap["getTag"] = Processor.process_getTag
     self._processMap["addTag"] = Processor.process_addTag
     self._processMap["deleteTag"] = Processor.process_deleteTag
     self._processMap["getTags"] = Processor.process_getTags
+    self._processMap["deleteAllTags"] = Processor.process_deleteAllTags
 
   def process(self, iprot, oprot):
     (name, type, seqid) = iprot.readMessageBegin()
@@ -161,12 +226,23 @@ class Processor(Iface, TProcessor):
       self._processMap[name](self, seqid, iprot, oprot)
     return True
 
+  def process_getTag(self, seqid, iprot, oprot):
+    args = getTag_args()
+    args.read(iprot)
+    iprot.readMessageEnd()
+    result = getTag_result()
+    result.success = self._handler.getTag(args.tag_id)
+    oprot.writeMessageBegin("getTag", TMessageType.REPLY, seqid)
+    result.write(oprot)
+    oprot.writeMessageEnd()
+    oprot.trans.flush()
+
   def process_addTag(self, seqid, iprot, oprot):
     args = addTag_args()
     args.read(iprot)
     iprot.readMessageEnd()
     result = addTag_result()
-    result.success = self._handler.addTag(args.tag)
+    result.success = self._handler.addTag(args.name)
     oprot.writeMessageBegin("addTag", TMessageType.REPLY, seqid)
     result.write(oprot)
     oprot.writeMessageEnd()
@@ -177,7 +253,7 @@ class Processor(Iface, TProcessor):
     args.read(iprot)
     iprot.readMessageEnd()
     result = deleteTag_result()
-    result.success = self._handler.deleteTag(args.tag)
+    result.success = self._handler.deleteTag(args.tag_id)
     oprot.writeMessageBegin("deleteTag", TMessageType.REPLY, seqid)
     result.write(oprot)
     oprot.writeMessageEnd()
@@ -194,22 +270,33 @@ class Processor(Iface, TProcessor):
     oprot.writeMessageEnd()
     oprot.trans.flush()
 
+  def process_deleteAllTags(self, seqid, iprot, oprot):
+    args = deleteAllTags_args()
+    args.read(iprot)
+    iprot.readMessageEnd()
+    result = deleteAllTags_result()
+    self._handler.deleteAllTags()
+    oprot.writeMessageBegin("deleteAllTags", TMessageType.REPLY, seqid)
+    result.write(oprot)
+    oprot.writeMessageEnd()
+    oprot.trans.flush()
+
 
 # HELPER FUNCTIONS AND STRUCTURES
 
-class addTag_args:
+class getTag_args:
   """
   Attributes:
-   - tag
+   - tag_id
   """
 
   thrift_spec = (
     None, # 0
-    (1, TType.STRING, 'tag', None, None, ), # 1
+    (1, TType.STRING, 'tag_id', None, None, ), # 1
   )
 
-  def __init__(self, tag=None,):
-    self.tag = tag
+  def __init__(self, tag_id=None,):
+    self.tag_id = tag_id
 
   def read(self, iprot):
     if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
@@ -222,7 +309,134 @@ class addTag_args:
         break
       if fid == 1:
         if ftype == TType.STRING:
-          self.tag = iprot.readString();
+          self.tag_id = iprot.readString();
+        else:
+          iprot.skip(ftype)
+      else:
+        iprot.skip(ftype)
+      iprot.readFieldEnd()
+    iprot.readStructEnd()
+
+  def write(self, oprot):
+    if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
+      oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
+      return
+    oprot.writeStructBegin('getTag_args')
+    if self.tag_id is not None:
+      oprot.writeFieldBegin('tag_id', TType.STRING, 1)
+      oprot.writeString(self.tag_id)
+      oprot.writeFieldEnd()
+    oprot.writeFieldStop()
+    oprot.writeStructEnd()
+
+  def validate(self):
+    return
+
+
+  def __repr__(self):
+    L = ['%s=%r' % (key, value)
+      for key, value in self.__dict__.iteritems()]
+    return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+  def __eq__(self, other):
+    return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+  def __ne__(self, other):
+    return not (self == other)
+
+class getTag_result:
+  """
+  Attributes:
+   - success
+  """
+
+  thrift_spec = (
+    (0, TType.LIST, 'success', (TType.STRING,None), None, ), # 0
+  )
+
+  def __init__(self, success=None,):
+    self.success = success
+
+  def read(self, iprot):
+    if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
+      fastbinary.decode_binary(self, iprot.trans, (self.__class__, self.thrift_spec))
+      return
+    iprot.readStructBegin()
+    while True:
+      (fname, ftype, fid) = iprot.readFieldBegin()
+      if ftype == TType.STOP:
+        break
+      if fid == 0:
+        if ftype == TType.LIST:
+          self.success = []
+          (_etype3, _size0) = iprot.readListBegin()
+          for _i4 in xrange(_size0):
+            _elem5 = iprot.readString();
+            self.success.append(_elem5)
+          iprot.readListEnd()
+        else:
+          iprot.skip(ftype)
+      else:
+        iprot.skip(ftype)
+      iprot.readFieldEnd()
+    iprot.readStructEnd()
+
+  def write(self, oprot):
+    if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
+      oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
+      return
+    oprot.writeStructBegin('getTag_result')
+    if self.success is not None:
+      oprot.writeFieldBegin('success', TType.LIST, 0)
+      oprot.writeListBegin(TType.STRING, len(self.success))
+      for iter6 in self.success:
+        oprot.writeString(iter6)
+      oprot.writeListEnd()
+      oprot.writeFieldEnd()
+    oprot.writeFieldStop()
+    oprot.writeStructEnd()
+
+  def validate(self):
+    return
+
+
+  def __repr__(self):
+    L = ['%s=%r' % (key, value)
+      for key, value in self.__dict__.iteritems()]
+    return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+  def __eq__(self, other):
+    return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+  def __ne__(self, other):
+    return not (self == other)
+
+class addTag_args:
+  """
+  Attributes:
+   - name
+  """
+
+  thrift_spec = (
+    None, # 0
+    (1, TType.STRING, 'name', None, None, ), # 1
+  )
+
+  def __init__(self, name=None,):
+    self.name = name
+
+  def read(self, iprot):
+    if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
+      fastbinary.decode_binary(self, iprot.trans, (self.__class__, self.thrift_spec))
+      return
+    iprot.readStructBegin()
+    while True:
+      (fname, ftype, fid) = iprot.readFieldBegin()
+      if ftype == TType.STOP:
+        break
+      if fid == 1:
+        if ftype == TType.STRING:
+          self.name = iprot.readString();
         else:
           iprot.skip(ftype)
       else:
@@ -235,9 +449,9 @@ class addTag_args:
       oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
       return
     oprot.writeStructBegin('addTag_args')
-    if self.tag is not None:
-      oprot.writeFieldBegin('tag', TType.STRING, 1)
-      oprot.writeString(self.tag)
+    if self.name is not None:
+      oprot.writeFieldBegin('name', TType.STRING, 1)
+      oprot.writeString(self.name)
       oprot.writeFieldEnd()
     oprot.writeFieldStop()
     oprot.writeStructEnd()
@@ -264,7 +478,7 @@ class addTag_result:
   """
 
   thrift_spec = (
-    (0, TType.BOOL, 'success', None, None, ), # 0
+    (0, TType.LIST, 'success', (TType.STRING,None), None, ), # 0
   )
 
   def __init__(self, success=None,):
@@ -280,8 +494,13 @@ class addTag_result:
       if ftype == TType.STOP:
         break
       if fid == 0:
-        if ftype == TType.BOOL:
-          self.success = iprot.readBool();
+        if ftype == TType.LIST:
+          self.success = []
+          (_etype10, _size7) = iprot.readListBegin()
+          for _i11 in xrange(_size7):
+            _elem12 = iprot.readString();
+            self.success.append(_elem12)
+          iprot.readListEnd()
         else:
           iprot.skip(ftype)
       else:
@@ -295,8 +514,11 @@ class addTag_result:
       return
     oprot.writeStructBegin('addTag_result')
     if self.success is not None:
-      oprot.writeFieldBegin('success', TType.BOOL, 0)
-      oprot.writeBool(self.success)
+      oprot.writeFieldBegin('success', TType.LIST, 0)
+      oprot.writeListBegin(TType.STRING, len(self.success))
+      for iter13 in self.success:
+        oprot.writeString(iter13)
+      oprot.writeListEnd()
       oprot.writeFieldEnd()
     oprot.writeFieldStop()
     oprot.writeStructEnd()
@@ -319,16 +541,16 @@ class addTag_result:
 class deleteTag_args:
   """
   Attributes:
-   - tag
+   - tag_id
   """
 
   thrift_spec = (
     None, # 0
-    (1, TType.STRING, 'tag', None, None, ), # 1
+    (1, TType.STRING, 'tag_id', None, None, ), # 1
   )
 
-  def __init__(self, tag=None,):
-    self.tag = tag
+  def __init__(self, tag_id=None,):
+    self.tag_id = tag_id
 
   def read(self, iprot):
     if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
@@ -341,7 +563,7 @@ class deleteTag_args:
         break
       if fid == 1:
         if ftype == TType.STRING:
-          self.tag = iprot.readString();
+          self.tag_id = iprot.readString();
         else:
           iprot.skip(ftype)
       else:
@@ -354,9 +576,9 @@ class deleteTag_args:
       oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
       return
     oprot.writeStructBegin('deleteTag_args')
-    if self.tag is not None:
-      oprot.writeFieldBegin('tag', TType.STRING, 1)
-      oprot.writeString(self.tag)
+    if self.tag_id is not None:
+      oprot.writeFieldBegin('tag_id', TType.STRING, 1)
+      oprot.writeString(self.tag_id)
       oprot.writeFieldEnd()
     oprot.writeFieldStop()
     oprot.writeStructEnd()
@@ -383,7 +605,7 @@ class deleteTag_result:
   """
 
   thrift_spec = (
-    (0, TType.STRING, 'success', None, None, ), # 0
+    (0, TType.LIST, 'success', (TType.STRING,None), None, ), # 0
   )
 
   def __init__(self, success=None,):
@@ -399,8 +621,13 @@ class deleteTag_result:
       if ftype == TType.STOP:
         break
       if fid == 0:
-        if ftype == TType.STRING:
-          self.success = iprot.readString();
+        if ftype == TType.LIST:
+          self.success = []
+          (_etype17, _size14) = iprot.readListBegin()
+          for _i18 in xrange(_size14):
+            _elem19 = iprot.readString();
+            self.success.append(_elem19)
+          iprot.readListEnd()
         else:
           iprot.skip(ftype)
       else:
@@ -414,8 +641,11 @@ class deleteTag_result:
       return
     oprot.writeStructBegin('deleteTag_result')
     if self.success is not None:
-      oprot.writeFieldBegin('success', TType.STRING, 0)
-      oprot.writeString(self.success)
+      oprot.writeFieldBegin('success', TType.LIST, 0)
+      oprot.writeListBegin(TType.STRING, len(self.success))
+      for iter20 in self.success:
+        oprot.writeString(iter20)
+      oprot.writeListEnd()
       oprot.writeFieldEnd()
     oprot.writeFieldStop()
     oprot.writeStructEnd()
@@ -520,10 +750,10 @@ class getTags_result:
       if fid == 0:
         if ftype == TType.LIST:
           self.success = []
-          (_etype3, _size0) = iprot.readListBegin()
-          for _i4 in xrange(_size0):
-            _elem5 = iprot.readString();
-            self.success.append(_elem5)
+          (_etype24, _size21) = iprot.readListBegin()
+          for _i25 in xrange(_size21):
+            _elem26 = iprot.readString();
+            self.success.append(_elem26)
           iprot.readListEnd()
         else:
           iprot.skip(ftype)
@@ -540,10 +770,94 @@ class getTags_result:
     if self.success is not None:
       oprot.writeFieldBegin('success', TType.LIST, 0)
       oprot.writeListBegin(TType.STRING, len(self.success))
-      for iter6 in self.success:
-        oprot.writeString(iter6)
+      for iter27 in self.success:
+        oprot.writeString(iter27)
       oprot.writeListEnd()
       oprot.writeFieldEnd()
+    oprot.writeFieldStop()
+    oprot.writeStructEnd()
+
+  def validate(self):
+    return
+
+
+  def __repr__(self):
+    L = ['%s=%r' % (key, value)
+      for key, value in self.__dict__.iteritems()]
+    return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+  def __eq__(self, other):
+    return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+  def __ne__(self, other):
+    return not (self == other)
+
+class deleteAllTags_args:
+
+  thrift_spec = (
+  )
+
+  def read(self, iprot):
+    if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
+      fastbinary.decode_binary(self, iprot.trans, (self.__class__, self.thrift_spec))
+      return
+    iprot.readStructBegin()
+    while True:
+      (fname, ftype, fid) = iprot.readFieldBegin()
+      if ftype == TType.STOP:
+        break
+      else:
+        iprot.skip(ftype)
+      iprot.readFieldEnd()
+    iprot.readStructEnd()
+
+  def write(self, oprot):
+    if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
+      oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
+      return
+    oprot.writeStructBegin('deleteAllTags_args')
+    oprot.writeFieldStop()
+    oprot.writeStructEnd()
+
+  def validate(self):
+    return
+
+
+  def __repr__(self):
+    L = ['%s=%r' % (key, value)
+      for key, value in self.__dict__.iteritems()]
+    return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+  def __eq__(self, other):
+    return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+  def __ne__(self, other):
+    return not (self == other)
+
+class deleteAllTags_result:
+
+  thrift_spec = (
+  )
+
+  def read(self, iprot):
+    if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
+      fastbinary.decode_binary(self, iprot.trans, (self.__class__, self.thrift_spec))
+      return
+    iprot.readStructBegin()
+    while True:
+      (fname, ftype, fid) = iprot.readFieldBegin()
+      if ftype == TType.STOP:
+        break
+      else:
+        iprot.skip(ftype)
+      iprot.readFieldEnd()
+    iprot.readStructEnd()
+
+  def write(self, oprot):
+    if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
+      oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
+      return
+    oprot.writeStructBegin('deleteAllTags_result')
     oprot.writeFieldStop()
     oprot.writeStructEnd()
 

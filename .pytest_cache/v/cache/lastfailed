@@ -1,0 +1,4 @@
+{
+  "src/ms/tag/test_tag.py::TestClass::()::test_add_delete": true, 
+  "src/ms/tag/test_tag.py::TestClass::()::test_add_once": true
+}

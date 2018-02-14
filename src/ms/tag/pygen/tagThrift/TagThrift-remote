@@ -23,9 +23,11 @@ if len(sys.argv) <= 1 or sys.argv[1] == '--help':
   print 'Usage: ' + sys.argv[0] + ' [-h host[:port]] [-u url] [-f[ramed]] function [arg1 [arg2...]]'
   print ''
   print 'Functions:'
-  print '  bool addTag(string tag)'
-  print '  string deleteTag(string tag)'
+  print '   getTag(string tag_id)'
+  print '   addTag(string name)'
+  print '   deleteTag(string tag_id)'
   print '   getTags(string beginTag)'
+  print '  void deleteAllTags()'
   print ''
   sys.exit(0)
 
@@ -77,7 +79,13 @@ protocol = TBinaryProtocol.TBinaryProtocol(transport)
 client = TagThrift.Client(protocol)
 transport.open()
 
-if cmd == 'addTag':
+if cmd == 'getTag':
+  if len(args) != 1:
+    print 'getTag requires 1 args'
+    sys.exit(1)
+  pp.pprint(client.getTag(args[0],))
+
+elif cmd == 'addTag':
   if len(args) != 1:
     print 'addTag requires 1 args'
     sys.exit(1)
@@ -94,6 +102,12 @@ elif cmd == 'getTags':
     print 'getTags requires 1 args'
     sys.exit(1)
   pp.pprint(client.getTags(args[0],))
+
+elif cmd == 'deleteAllTags':
+  if len(args) != 0:
+    print 'deleteAllTags requires 0 args'
+    sys.exit(1)
+  pp.pprint(client.deleteAllTags())
 
 else:
   print 'Unrecognized method %s' % cmd

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from photographer import Photographer
+from tag import Tag
 import pymongo
 
 def retry(num_tries, exceptions):
