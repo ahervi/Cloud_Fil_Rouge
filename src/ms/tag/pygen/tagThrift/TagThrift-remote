@@ -15,16 +15,17 @@ from thrift.transport import TSocket
 from thrift.transport import THttpClient
 from thrift.protocol import TBinaryProtocol
 
-from tag import Tag
-from tag.ttypes import *
+from tagThrift import TagThrift
+from tagThrift.ttypes import *
 
 if len(sys.argv) <= 1 or sys.argv[1] == '--help':
   print ''
   print 'Usage: ' + sys.argv[0] + ' [-h host[:port]] [-u url] [-f[ramed]] function [arg1 [arg2...]]'
   print ''
   print 'Functions:'
-  print '  void addTag(string tag)'
-  print '   deleteTags(string tag)'
+  print '  bool addTag(string tag)'
+  print '  string deleteTag(string tag)'
+  print '   getTags(string beginTag)'
   print ''
   sys.exit(0)
 
@@ -73,7 +74,7 @@ else:
   else:
     transport = TTransport.TBufferedTransport(socket)
 protocol = TBinaryProtocol.TBinaryProtocol(transport)
-client = Tag.Client(protocol)
+client = TagThrift.Client(protocol)
 transport.open()
 
 if cmd == 'addTag':
@@ -82,11 +83,17 @@ if cmd == 'addTag':
     sys.exit(1)
   pp.pprint(client.addTag(args[0],))
 
-elif cmd == 'deleteTags':
+elif cmd == 'deleteTag':
   if len(args) != 1:
-    print 'deleteTags requires 1 args'
+    print 'deleteTag requires 1 args'
     sys.exit(1)
-  pp.pprint(client.deleteTags(args[0],))
+  pp.pprint(client.deleteTag(args[0],))
+
+elif cmd == 'getTags':
+  if len(args) != 1:
+    print 'getTags requires 1 args'
+    sys.exit(1)
+  pp.pprint(client.getTags(args[0],))
 
 else:
   print 'Unrecognized method %s' % cmd

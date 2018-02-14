@@ -5,26 +5,33 @@ from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
 from thrift.server import TServer
 
-from pygen.tag import Tag
+from pygen.tagThrift import TagThrift
 
 
-class TagHandler:
+class TagThriftHandler:
     def __init__(self):
         self.log = {}
 
     def addTag(self, tag):
 	#mogo db add tag to tag db
 	print(tag)
-        return
+        return True
 
     def deleteTag(self, tag):
 	#mogo db delete tag in tag db
 	print(tag)
 	return tag
 
+    def getTags(self, beginTag):
+        #mongo db get tags that begin with beginTag
+        print(beginTag)
+        tags = ["example1", "example2"]
+        print(str(tags))
+        return tags
 
-handler = TagHandler()
-processor = Tag.Processor(handler)
+
+handler = TagThriftHandler()
+processor = TagThrift.Processor(handler)
 transport = TSocket.TServerSocket(port=30303)
 tfactory = TTransport.TBufferedTransportFactory()
 pfactory = TBinaryProtocol.TBinaryProtocolFactory()
