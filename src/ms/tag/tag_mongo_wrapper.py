@@ -2,16 +2,11 @@
 
 import logging
 import json
-
-import connexion
-from connexion import NoContent
 from tag import Tag
 from mongoengine import *
-
 from bson.objectid import ObjectId
 from bson import json_util
 from bson.errors import InvalidId
-
 import json
 import robustify
 
