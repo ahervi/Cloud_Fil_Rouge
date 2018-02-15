@@ -49,7 +49,7 @@ class TagThriftHandler:
 
     def deleteAllTags(self):
         Tag.objects.all().delete()
-	return
+
 
 
 

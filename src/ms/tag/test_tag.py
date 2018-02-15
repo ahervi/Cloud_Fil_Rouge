@@ -51,6 +51,7 @@ class TestClass(object):
         assert res2[1] == '201'
         res3 = client.getTags(TestClass.data1['name'])
         assert TestClass.data1['name'] in res3 and TestClass.data2['name'] in res3 and len(res3) == 2
+        
 
 
 
