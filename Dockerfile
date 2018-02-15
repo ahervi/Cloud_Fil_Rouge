@@ -1,2 +1,2 @@
-FROM python:2
-RUN pip install pytest mongoengine flask connexion thrift
+FROM python:3
+RUN pip3 install pytest mongoengine flask connexion

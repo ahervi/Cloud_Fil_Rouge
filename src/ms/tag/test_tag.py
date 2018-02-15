@@ -1,5 +1,4 @@
 import pytest
-import connexion
 import json
 from bson import json_util
 import logging
