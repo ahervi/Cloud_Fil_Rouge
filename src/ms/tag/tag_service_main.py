@@ -15,7 +15,6 @@ from thrift.server import TServer
 from pygen.tagThrift import TagThrift
 from tag_mongo_wrapper import *
 from tag import Tag
-
 class TagThriftHandler:
     def __init__(self):
         self.log = {}
@@ -50,7 +49,7 @@ class TagThriftHandler:
 
     def deleteAllTags(self):
         Tag.objects.all().delete()
-
+	return
 
 
 
