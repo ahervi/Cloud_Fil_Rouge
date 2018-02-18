@@ -4,6 +4,7 @@ import logging
 import connexion
 from connexion import NoContent
 from mongoengine import connect
+from flask_cors import CORS
 
 
 
@@ -17,6 +18,7 @@ connect("photographers", host="127.0.0.1")
 # set the WSGI application callable to allow using uWSGI:
 # uwsgi --http :8080 -w app
 application = app.app
+CORS(application)
 
 if __name__ == '__main__':
     app.run(port=8090)
