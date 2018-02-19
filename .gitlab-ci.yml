@@ -4,7 +4,7 @@ image: registry.cloud.rennes.enst-bretagne.fr:5000/ws_12
 services:
   - mongo
 photo:
-  script: "cd src/ms/photo; pytest -v"
+  script: "cd src/ms/photo; ../tag/tag_service_main.py & pytest -v"
   stage: test
 photographer:
   script: "cd src/ms/photographer; pytest -v"

@@ -39,8 +39,7 @@ class TestClass(object):
         res = client.addTag(TestClass.data1['name'])
         assert res[1] == '201'
         res2 = client.addTag(TestClass.data1['name'])
-        assert res2[1] == '409'
-
+        assert res2[1] == '201' and res2[0] == 'Existed'
     @staticmethod
     def test_get_beginning(client):
         client.deleteAllTags()

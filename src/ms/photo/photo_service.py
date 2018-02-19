@@ -14,7 +14,11 @@ import pymongo
 from flask import jsonify
 import json
 import flask
-
+from thrift import Thrift
+from thrift.transport import TSocket
+from thrift.transport import TTransport
+from thrift.protocol import TBinaryProtocol
+from pygen.tagThrift import TagThrift
 from photo_mongo_wrapper import *
 
 # See:
@@ -39,22 +43,38 @@ def get_photo(photo_id):
         return 'Mongo unavailable', 503
     return json.loads(json.dumps(ph._data, indent=4, default=json_util.default))
 
-def post_photos(photo):                                           
+def post_photos(photo):  
     try:                                                                        
         if mongo_check(photo['author']) > 0:                       
             return 'Conflict', 409                                              
-        else:                                                                   
-            ph = mongo_add (photo['author'],                    
+        else: 
+            try:
+                transport = TSocket.TSocket('127.0.0.1', 30303)
+                transport = TTransport.TBufferedTransport(transport)
+                protocol = TBinaryProtocol.TBinaryProtocol(transport)
+                client = TagThrift.Client(protocol)
+                transport.open()
+            except Thrift.TException as tx:
+                print(tx.message)
+            client.deleteAllTags()
+            for tag in photo['tags']:
+                tagResultat = client.addTag(tag)
+            transport.close()
+            if tagResultat[1] == '201':
+            	ph = mongo_add (photo['author'],                    
                             photo['filename'],
                             photo['b64'],
                             photo['tags'])                          
-            return 'Created', 201, {'location': '/photo/' + str(ph.id)} 
+            	return 'Created', 201, {'location': '/photo/' + str(ph.id)}
+            else:
+            	return 'A problem with tag microservice has occured' + str(tagResultat), 503
     except pymongo.errors.ServerSelectionTimeoutError as sste:                  
         return 'Mongo unavailable', 503                                         
 
 def delete_photo(photo_id):
     ph = Photo.objects(id=ObjectId(photo_id)).get().delete()
     return 'NoContent', 204
+
 
 def put_photo(photo_id, photo):
     try:
@@ -67,4 +87,4 @@ def put_photo(photo_id, photo):
     except (Photo.DoesNotExist, InvalidId) as e:
         return 'Not Found', 404
     return 'Modified', 201, {'location': '/photo/' + str(ph.id)} 
-	
+    

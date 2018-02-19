@@ -32,11 +32,11 @@ class TagThriftHandler:
         return ['Get Ok', '201', tag['name']]
 
     def addTag(self, name):
-        try:                                                                        
-            if mongo_check(name) > 0:                       
-                return ['Conflict', '409']                                              
+        try:              
+            if mongo_check(name) > 0:
+                return ['Existed', '201']                  
             else:
-                tag = mongo_add(name)                          
+                tag = mongo_add(name)
                 return ['Created', '201', str(tag.id)]
         except pymongo.errors.ServerSelectionTimeoutError as sste:                  
             return ['Mongo unavailable', '503']  
@@ -50,7 +50,7 @@ class TagThriftHandler:
 
     def deleteAllTags(self):
         Tag.objects.all().delete()
-	return
+    
 
 
 
