@@ -56,7 +56,6 @@ def post_photos(photo):
                 transport.open()
             except Thrift.TException as tx:
                 print(tx.message)
-            client.deleteAllTags()
             for tag in photo['tags']:
                 tagResultat = client.addTag(tag)
             transport.close()
