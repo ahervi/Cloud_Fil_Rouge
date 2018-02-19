@@ -10,7 +10,7 @@ from pygen.tagThrift import TagThrift
 @pytest.fixture(scope="class")
 def client():
     try:
-        transport = TSocket.TSocket('172.17.0.2', 30303)
+        transport = TSocket.TSocket('127.0.0.1', 30303)
         transport = TTransport.TBufferedTransport(transport)
         protocol = TBinaryProtocol.TBinaryProtocol(transport)
         client = TagThrift.Client(protocol)
@@ -29,6 +29,6 @@ def clearTags():
     
 @pytest.fixture(scope="class")
 def initDB():
-    connect("tags_test", host="172.17.0.2")
+    connect("tags_test", host="127.0.0.1")
     yield
     # add code to destroy the database ?
