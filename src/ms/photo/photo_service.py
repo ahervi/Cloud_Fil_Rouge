@@ -48,6 +48,11 @@ def post_photos(photo):
         if mongo_check(photo['author']) > 0:                       
             return 'Conflict', 409                                              
         else: 
+            ph = mongo_add (photo['author'],                    
+                            photo['filename'],
+                            photo['b64'],
+                            photo['tags']) 
+        	#Communication avec le service tag : s'il n'est pas lance la photo est ajoutee mais les tags ne sont pas crees, le tout sans erreurs
             try:
                 transport = TSocket.TSocket('127.0.0.1', 30303)
                 transport = TTransport.TBufferedTransport(transport)
@@ -56,17 +61,16 @@ def post_photos(photo):
                 transport.open()
             except Thrift.TException as tx:
                 print(tx.message)
+                return 'Created but tag not added', 201, {'location': '/photo/' + str(ph.id)}
+
             for tag in photo['tags']:
                 tagResultat = client.addTag(tag)
             transport.close()
-            if tagResultat[1] == '201':
-            	ph = mongo_add (photo['author'],                    
-                            photo['filename'],
-                            photo['b64'],
-                            photo['tags'])                          
-            	return 'Created', 201, {'location': '/photo/' + str(ph.id)}
-            else:
-            	return 'A problem with tag microservice has occured' + str(tagResultat), 503
+
+
+             
+            return 'Created', 201, {'location': '/photo/' + str(ph.id)}
+
     except pymongo.errors.ServerSelectionTimeoutError as sste:                  
         return 'Mongo unavailable', 503                                         
 
