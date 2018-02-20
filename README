@@ -1,0 +1,5 @@
+Être sûr que mongodb est désactivé puis :
+docker-compose up
+
+Adresse du site : localhost:5000
+Adresse de swagger photo et photographer: localhost:8091 et localhost:8090
