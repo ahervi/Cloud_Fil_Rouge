@@ -1,0 +1,1 @@
+docker run --link mongo -v $(pwd):/app -w /app cloudui /app/app.py -p 5000:5000

@@ -2,7 +2,6 @@
 
 import logging
 import json
-from connexion import NoContent
 from tag import Tag
 from mongoengine import *
 from bson.objectid import ObjectId

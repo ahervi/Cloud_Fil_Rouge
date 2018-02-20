@@ -59,7 +59,7 @@ class TagThriftHandler:
 logging.basicConfig(level=logging.DEBUG)
 
 #connect("mongodb://user:pwd@mongodb_photographer:27017/photographers", alias="photographers")
-connect("tags", host="127.0.0.1")
+connect("tags", host="172.17.0.2")
 # from http://coderobot.downley.net/swagger-driven-testing-in-python.html
 # set the WSGI application callable to allow using uWSGI:
 # uwsgi --http :8080 -w app
@@ -79,5 +79,6 @@ if __name__ == '__main__':
     server = TServer.TSimpleServer(processor, transport, tfactory, pfactory)
 
     print("Starting tag server...")
+
     server.serve()
     print("done!")

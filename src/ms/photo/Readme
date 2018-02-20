@@ -1,0 +1,1 @@
+docker run --link mongo -v $(pwd):/app -w /app cloudphoto /app/photo_service_main.py -p 8091:8091

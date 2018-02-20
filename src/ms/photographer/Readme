@@ -1,0 +1,1 @@
+docker run --link mongo -v $(pwd):/app -w /app cloudphotographer /app/photographer_service_main.py -p 8090:8090

@@ -1,0 +1,1 @@
+docker run --link mongo -v $(pwd):/app -w /app cloudtag /app/tag_service_main.py -p 30303:30303
