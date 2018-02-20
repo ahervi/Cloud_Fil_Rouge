@@ -1,0 +1,1 @@
+docker build -t cloudtag . && docker tag cloudtag eutheruan/cloud:tag && docker push eutheruan/cloud:tag 

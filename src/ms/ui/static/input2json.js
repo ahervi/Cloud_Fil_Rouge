@@ -16,6 +16,7 @@ form.onsubmit = function (e) {
     	data[input.name] = input.value;
     }
   }
+  alert("Photographer registered")
   var xhr = new XMLHttpRequest();
   xhr.open(form.method, form.action, true);
   xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');

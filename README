@@ -2,4 +2,7 @@
 docker-compose up
 
 Adresse du site : localhost:5000
-Adresse de swagger photo et photographer: localhost:8091 et localhost:8090
+Adresse de swagger photo et photographer: 
+docker ps
+docker inspect CONTAINER_id
+IP_trouvée:8091 et IP_trouvée2:8090

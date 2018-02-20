@@ -15,7 +15,7 @@ from thrift.server import TServer
 from pygen.tagThrift import TagThrift
 from tag_mongo_wrapper import *
 from tag import Tag
-
+import socket
 class TagThriftHandler:
     def __init__(self):
         self.log = {}
@@ -59,7 +59,7 @@ class TagThriftHandler:
 logging.basicConfig(level=logging.DEBUG)
 
 #connect("mongodb://user:pwd@mongodb_photographer:27017/photographers", alias="photographers")
-connect("tags", host="mongo")
+connect("tags", host=socket.gethostbyname("mongo"))
 # from http://coderobot.downley.net/swagger-driven-testing-in-python.html
 # set the WSGI application callable to allow using uWSGI:
 # uwsgi --http :8080 -w app

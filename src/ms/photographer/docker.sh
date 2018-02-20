@@ -1,0 +1,1 @@
+docker build -t cloudphotographer . && docker tag cloudphotographer eutheruan/cloud:photographer && docker push eutheruan/cloud:photographer 

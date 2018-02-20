@@ -9,23 +9,15 @@ services:
   tag:
     #image: "registry.cloud.rennes.enst-bretagne.fr:5000/ws_12"
     image: "eutheruan/cloud:tag"
-    ports:
-     - "30303:30303"
 
   photo:
     #image: "registry.cloud.rennes.enst-bretagne.fr:5000/ws_12"
     image: "eutheruan/cloud:photo"
-    ports:
-     - "8091:8091"
 
   photographer:
     #image: "registry.cloud.rennes.enst-bretagne.fr:5000/ws_12"
     image: "eutheruan/cloud:photographer"
-    ports:
-     - "8090:8090"
 
   mongo:
     #image: "registry.cloud.rennes.enst-bretagne.fr:5000/ws_12"
     image: "mongo"
-    ports:
-     - "27017:27017"

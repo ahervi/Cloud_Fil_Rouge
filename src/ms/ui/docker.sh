@@ -1,0 +1,1 @@
+docker build -t cloudui . && docker tag cloudui eutheruan/cloud:ui && docker push eutheruan/cloud:ui 
