@@ -3,8 +3,8 @@ from flask import Flask
 from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
-ip_addr_photographer = "172.17.0.6"
-ip_addr_photo = "172.17.0.6"
+ip_addr_photographer = "192.17.0.2"
+ip_addr_photo = "192.17.0.3"
 photographers_app_port = "8090"
 photos_app_port = "8091"
 photographers_app_port = "8090"
