@@ -25,21 +25,18 @@ def index():
 	res += "<input type='submit' value='Submit' id='photographer_form_submit'>"
 	res += "</form>"
 	res += "<script type=\"text/javascript\" src=static/input2json.js></script>"
-	return res
 
-def index2():
-
-	res = "Define photo:<br/>"
+	res += "Define photo:<br/>"
 	res += "<form id='photo_form' method='post' action='http://"+ip_addr+":"+ photos_app_port + "/photos'>"
 	res += "author:<br/><input type='test' name='author' id='author_input'><br/>"
 	res += "filename:<br/><input type='test'name='filename' id='filename_input'><br/>"
 	res += "tags:<br/><input name='tags' id='tags_input_1'><br/>"
 	res += "<input name='tags' id='tags_input_2'><br/>"
 	res += "<input name='tags' id='tags_input_3'><br/>"
-	res += "b64:<br/><input type='test'name='b64' d='b64_input'><br/><br/>"
+	res += "b64:<br/><input type='file'name='b64' d='b64_input'><br/><br/>"
 	res += "<input type='submit' value='Submit' id='photo_form_submit'>"
 	res += "</form>"
-	res += "<script type=\"text/javascript\" src=static/input2json.js></script>"
+	res += "<script type=\"text/javascript\" src=static/photoForm2Json.js></script>"
 	return res
 
 

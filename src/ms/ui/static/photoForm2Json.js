@@ -1,4 +1,16 @@
 var form = document.getElementById('photo_form')
+
+function encodeImageFileAsURL(cb) {
+            return function(){
+                var file = this.files[0];
+                var reader  = new FileReader();
+                reader.onloadend = function () {
+                    cb(reader.result);
+                }
+                reader.readAsDataURL(file);
+            }
+}
+
 form.onsubmit = function (e) {
   // stop the regular form submission
   e.preventDefault();
@@ -11,6 +23,9 @@ form.onsubmit = function (e) {
       var input3 = form[i+2];
         data[input.name] = [input.value, input2.value, input3.value];
         i+=2;
+    }
+    else if (input.name == "b64") {
+        data[input.name] = encodeImageFileAsURL(input.value);
     }
     else {
         data[input.name] = input.value;
