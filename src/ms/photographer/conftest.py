@@ -18,6 +18,6 @@ def clearPhotographers():
     
 @pytest.fixture(scope="class")
 def initDB():
-    connect("photographers_test", host="127.0.0.1")
+    connect("photographers_test", host="172.17.0.2")
     yield
     # add code to destroy the database ?
