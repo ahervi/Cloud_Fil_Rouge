@@ -1,1 +1,1 @@
-docker build -t cloudtag . && docker tag cloudtag eutheruan/cloud:tag && docker push eutheruan/cloud:tag 
+docker build -t cloudtag . && docker tag cloudtag registry.cloud.rennes.enst-bretagne.fr:5000/ws_12:tag && docker push registry.cloud.rennes.enst-bretagne.fr:5000/ws_12:tag 

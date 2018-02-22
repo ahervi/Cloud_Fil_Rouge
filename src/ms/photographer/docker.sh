@@ -1,1 +1,1 @@
-docker build -t cloudphotographer . && docker tag cloudphotographer eutheruan/cloud:photographer && docker push eutheruan/cloud:photographer 
+docker build -t cloudphotographer . && docker tag cloudphotographer registry.cloud.rennes.enst-bretagne.fr:5000/ws_12:photographer && docker push registry.cloud.rennes.enst-bretagne.fr:5000/ws_12:photographer 
