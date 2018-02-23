@@ -19,7 +19,7 @@ import robustify
 
 @robustify.retry_mongo
 def mongo_check(author):
-    count = Photo.objects(author=author).count()
+    count = Photo.objects(filename=filename).count()
     return count
 
 @robustify.retry_mongo

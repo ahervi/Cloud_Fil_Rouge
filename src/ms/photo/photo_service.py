@@ -51,7 +51,7 @@ def get_photo(photo_id):
 
 def post_photos(photo):  
     try:                                                                        
-        if mongo_check(photo['author']) > 0:                       
+        if mongo_check(photo['filename']) > 0:                       
             return 'Conflict', 409                                              
         else: 
             ph = mongo_add (photo['author'],                    
