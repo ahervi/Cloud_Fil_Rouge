@@ -24,6 +24,12 @@ from photo_mongo_wrapper import *
 # See:
 # https://devops.com/pymongo-pointers-make-robust-highly-available-mongo-queries
 # for Robust Mongo Queries
+def hostname_resolves(hostname):
+    try:
+        socket.gethostbyname(hostname)
+        return 1
+    except socket.error:
+        return 0
 
 def get_photos(offset, limit):
     try:
@@ -52,23 +58,25 @@ def post_photos(photo):
                             photo['filename'],
                             photo['b64'],
                             photo['tags']) 
-        	#Communication avec le service tag : s'il n'est pas lance la photo est ajoutee mais les tags ne sont pas crees, le tout sans erreurs
-            try:
-                transport = TSocket.TSocket('127.0.0.1', 30303)
-                transport = TTransport.TBufferedTransport(transport)
-                protocol = TBinaryProtocol.TBinaryProtocol(transport)
-                client = TagThrift.Client(protocol)
-                transport.open()
-            except Thrift.TException as tx:
-                print(tx.message)
+            #Communication avec le service tag : s'il n'est pas lance la photo est ajoutee mais les tags ne sont pas crees, le tout sans erreurs
+            if hostname_resolves("tag"):
+                try:
+                    transport = TSocket.TSocket(socket.gethostbyname("tag"), 30303)
+                    transport = TTransport.TBufferedTransport(transport)
+                    protocol = TBinaryProtocol.TBinaryProtocol(transport)
+                    client = TagThrift.Client(protocol)
+                    transport.open()
+                except Thrift.TException as tx:
+                    print(tx.message)
+                    return 'Created but tag not added', 201, {'location': '/photo/' + str(ph.id)}
+
+                for tag in photo['tags']:
+                    tagResultat = client.addTag(tag)
+                transport.close()
+
+            else:
                 return 'Created but tag not added', 201, {'location': '/photo/' + str(ph.id)}
 
-            for tag in photo['tags']:
-                tagResultat = client.addTag(tag)
-            transport.close()
-
-
-             
             return 'Created', 201, {'location': '/photo/' + str(ph.id)}
 
     except pymongo.errors.ServerSelectionTimeoutError as sste:                  
