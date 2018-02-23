@@ -51,7 +51,7 @@ def get_photo(photo_id):
 
 def post_photos(photo):  
     try:                                                                        
-        if mongo_check(photo['author']) > 0:                       
+        if mongo_check(photo['filename']) > 0:                       
             return 'Conflict', 409                                              
         else: 
             ph = mongo_add (photo['author'],                    
@@ -80,7 +80,7 @@ def post_photos(photo):
             return 'Created', 201, {'location': '/photo/' + str(ph.id)}
 
     except pymongo.errors.ServerSelectionTimeoutError as sste:                  
-        return 'Mongo unavailable', 503                                         
+        return 'Mongo unavailable', 503            
 
 def delete_photo(photo_id):
     ph = Photo.objects(id=ObjectId(photo_id)).get().delete()
