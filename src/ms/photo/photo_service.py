@@ -20,7 +20,7 @@ from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
 from pygen.tagThrift import TagThrift
 from photo_mongo_wrapper import *
-
+import socket
 # See:
 # https://devops.com/pymongo-pointers-make-robust-highly-available-mongo-queries
 # for Robust Mongo Queries

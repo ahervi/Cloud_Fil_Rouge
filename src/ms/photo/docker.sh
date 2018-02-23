@@ -1,1 +1,1 @@
-docker build -t cloudphoto . && docker tag cloudphoto registry.cloud.rennes.enst-bretagne.fr:5000/ws_12:photo && docker push registry.cloud.rennes.enst-bretagne.fr:5000/ws_12:photo 
+docker build -t cloudphoto . && docker tag cloudphoto eutheruan/cloud:photo && docker push eutheruan/cloud:photo 

@@ -1,1 +1,1 @@
-docker build -t cloudui . && docker tag cloudui registry.cloud.rennes.enst-bretagne.fr:5000/ws_12:ui && docker push registry.cloud.rennes.enst-bretagne.fr:5000/ws_12:ui 
+docker build -t cloudui . && docker tag cloudui eutheruan/cloud:ui && docker push eutheruan/cloud:ui 

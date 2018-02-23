@@ -1,18 +1,23 @@
 version: '3'
 services:
   ui:
-    image: "registry.cloud.rennes.enst-bretagne.fr:5000/ws_12:ui"
+    #image: "registry.cloud.rennes.enst-bretagne.fr:5000/ws_12"
+    image: "eutheruan/cloud:ui"
     ports:
      - "5000:5000"
 
   tag:
-    image: "registry.cloud.rennes.enst-bretagne.fr:5000/ws_12:tag"
+    #image: "registry.cloud.rennes.enst-bretagne.fr:5000/ws_12"
+    image: "eutheruan/cloud:tag"
 
   photo:
-    image: "registry.cloud.rennes.enst-bretagne.fr:5000/ws_12:photo"
+    #image: "registry.cloud.rennes.enst-bretagne.fr:5000/ws_12"
+    image: "eutheruan/cloud:photo"
 
   photographer:
-    image: "registry.cloud.rennes.enst-bretagne.fr:5000/ws_12:photographer"
+    #image: "registry.cloud.rennes.enst-bretagne.fr:5000/ws_12"
+    image: "eutheruan/cloud:photographer"
 
   mongo:
+    #image: "registry.cloud.rennes.enst-bretagne.fr:5000/ws_12"
     image: "mongo"
