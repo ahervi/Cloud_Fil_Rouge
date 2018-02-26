@@ -16,9 +16,10 @@ from flask import jsonify
 import json
 import flask
 import robustify
+import socket
 
 @robustify.retry_mongo
-def mongo_check(author):
+def mongo_check(filename):
     count = Photo.objects(filename=filename).count()
     return count
 
