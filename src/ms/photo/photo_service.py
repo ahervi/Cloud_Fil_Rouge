@@ -59,26 +59,24 @@ def post_photos(photo):
                             photo['b64'],
                             photo['tags']) 
             #Communication avec le service tag : s'il n'est pas lance la photo est ajoutee mais les tags ne sont pas crees, le tout sans erreurs
-            if hostname_resolves("tag"):
-                try:
-                    transport = TSocket.TSocket(socket.gethostbyname("tag"), 30303)
-                    transport = TTransport.TBufferedTransport(transport)
-                    protocol = TBinaryProtocol.TBinaryProtocol(transport)
-                    client = TagThrift.Client(protocol)
-                    transport.open()
-                except Thrift.TException as tx:
-                    print(tx.message)
-                    return 'Created but tag not added', 201, {'location': '/photo/' + str(ph.id)}
-
-                for tag in photo['tags']:
-                    tagResultat = client.addTag(tag)
-                transport.close()
-
-            else:
+            try:
+                transport = TSocket.TSocket("192.168.2.4", 30303)
+                transport = TTransport.TBufferedTransport(transport)
+                protocol = TBinaryProtocol.TBinaryProtocol(transport)
+                client = TagThrift.Client(protocol)
+                transport.open()
+            except Thrift.TException as tx:
+                print(tx.message)
                 return 'Created but tag not added', 201, {'location': '/photo/' + str(ph.id)}
 
-            return 'Created', 201, {'location': '/photo/' + str(ph.id)}
+            for tag in photo['tags']:
+                tagResultat = client.addTag(tag)
+            transport.close()
 
+            
+            return 'Created but tag not added', 201, {'location': '/photo/' + str(ph.id)}
+
+            
     except pymongo.errors.ServerSelectionTimeoutError as sste:                  
         return 'Mongo unavailable', 503                                         
 

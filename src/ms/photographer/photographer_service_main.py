@@ -13,7 +13,7 @@ app = connexion.FlaskApp(__name__)
 app.add_api('photographer_service.yml')
 
 #connect("mongodb://user:pwd@mongodb_photographer:27017/photographers", alias="photographers")
-connect("photographers", host=socket.gethostbyname("mongo"))
+connect("photographers", host="192.168.2.2")
 # from http://coderobot.downley.net/swagger-driven-testing-in-python.html
 # set the WSGI application callable to allow using uWSGI:
 # uwsgi --http :8080 -w app

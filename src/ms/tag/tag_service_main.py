@@ -59,7 +59,7 @@ class TagThriftHandler:
 logging.basicConfig(level=logging.DEBUG)
 
 #connect("mongodb://user:pwd@mongodb_photographer:27017/photographers", alias="photographers")
-connect("tags", host=socket.gethostbyname("mongo"))
+connect("tags", host="192.168.2.2")
 # from http://coderobot.downley.net/swagger-driven-testing-in-python.html
 # set the WSGI application callable to allow using uWSGI:
 # uwsgi --http :8080 -w app

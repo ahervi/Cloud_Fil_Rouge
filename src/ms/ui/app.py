@@ -3,8 +3,8 @@ from flask import Flask
 from flask_cors import CORS, cross_origin
 import socket
 app = Flask(__name__)
-ip_addr_photographer = "photographer"
-ip_addr_photo = "photo"
+ip_addr_photographer = "192.168.2.5"
+ip_addr_photo = "192.168.2.3"
 photographer_app_port = "8090"
 photo_app_port = "8091"
 
@@ -16,7 +16,7 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 def index():
 
     res = "Define photographer:<br/>"
-    res += "<form id='photographer_form' method='post' action='http://"+socket.gethostbyname(ip_addr_photographer)+":"+ photographer_app_port + "/photographers'>"
+    res += "<form id='photographer_form' method='post' action='http://"+ip_addr_photographer+":"+ photographer_app_port + "/photographers'>"
     res += "First name:<br/><input type='test' name='first_name' id='first_name_input'><br/>"
     res += "Display name:<br/><input type='test'name='display_name' id='display_name_input'><br/>"
     res += "Interests:<br/><input name='interests' id='interests_input_1'><br/>"
@@ -33,7 +33,7 @@ def index():
 
 def index2():
     res = "Define photo:<br/>"
-    res += "<form id='photo_form' method='post' action='http://"+socket.gethostbyname(ip_addr_photo)+":"+ photo_app_port + "/photos'>"
+    res += "<form id='photo_form' method='post' action='http://"+ip_addr_photo+":"+ photo_app_port + "/photos'>"
     res += "author:<br/><input type='test' name='author' id='author_input'><br/>"
     res += "filename:<br/><input type='test'name='filename' id='filename_input'><br/>"
     res += "tags:<br/><input name='tags' id='tags_input_1'><br/>"

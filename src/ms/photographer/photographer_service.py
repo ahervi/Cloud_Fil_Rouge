@@ -48,7 +48,7 @@ def post_photographers(photographer):
                             photographer['first_name'],                         
                             photographer['last_name'],                          
                             photographer['interests'])                          
-            return 'Created', 201, {'location': '/photographer/' + str(ph.id)} 
+            return 'Created', 201, {'location': '/' + "photographer" + '/' + str(ph.id)} 
     except pymongo.errors.ServerSelectionTimeoutError as sste:                  
         return 'Mongo unavailable', 503                                         
 

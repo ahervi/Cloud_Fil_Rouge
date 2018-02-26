@@ -1,0 +1,35 @@
+server_security_group:
+  type: OS::Neutron::SecurityGroup
+  properties:
+    description: Test group to demonstrate Neutron security group functionality with Heat.
+    name: test-security-group
+    rules: [
+      {remote_ip_prefix: 0.0.0.0/0,
+      protocol: udp,
+      port_range_min: 0,
+      port_range_max: 65535},
+      {remote_ip_prefix: 0.0.0.0/0,
+      protocol: tcp,
+      port_range_min: 0,
+      port_range_max: 65535},
+      {remote_ip_prefix: 0.0.0.0/0,
+      protocol: icmp}]
+
+
+
+resources:
+   my_port:
+      type: OS::Neutron::Port
+      properties:
+          name: "port1"
+          network_id: "<net_id>"
+          fixed_ips: [{"subnet": "<subnet_name>", "ip_address": 10.10.10.15}]
+
+   my_vm:
+      type: OS::Nova::Server
+      properties:
+          name: "testvm"
+          image: { get_param: var_Image }
+          flavor: "m1.tiny"
+          networks:
+          - port: { get_resource: my_port }
